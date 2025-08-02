@@ -14,6 +14,11 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,6 +35,8 @@ SECRET_KEY = 'django-insecure-cf!^-d3bga-+qt0gk(buq)0ej%$)nwgpe!vu&@(3az5p^w3y50
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+
 
 
 # Application definition
@@ -49,6 +56,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'drf_yasg',  # Swagger documentation
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -173,3 +182,18 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'temiloluwagboyega@gmail.com'  # Replace with your email
 EMAIL_HOST_PASSWORD = 'cxlr ohtb qgtu awjn'
 DEFAULT_FROM_EMAIL = 'Campus Info'
+
+
+
+
+
+# Cloudinary configuration from environment variables
+CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME')
+CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
+CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
+
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
