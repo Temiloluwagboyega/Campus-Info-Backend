@@ -202,3 +202,37 @@ cloudinary.config(
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET')
 )
+
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Campus Info Admin",
+    "site_header": "Campus Info Admin",
+    "site_brand": "Campus Info",
+    "welcome_sign": "Welcome to Campus Info Admin",
+    "copyright": "Campus Info",
+    "search_model": "user.User",
+    "user_avatar": None,
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    "order_with_respect_to": ["user", "post"],
+    "icons": {
+        "user.User": "fas fa-user",
+        "post.Post": "fas fa-newspaper",
+        "post.Like": "fas fa-thumbs-up",
+        "post.Comment": "fas fa-comments",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "related_modal_active": False,
+    "custom_css": None,
+    "custom_js": None,
+    "show_ui_builder": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly",
+    "dark_mode_theme": "darkly",
+}
