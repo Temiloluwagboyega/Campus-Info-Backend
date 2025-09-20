@@ -13,8 +13,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from decouple import config
 
-
+import dj_database_url
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
@@ -29,13 +30,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-cf!^-d3bga-+qt0gk(buq)0ej%$)nwgpe!vu&@(3az5p^w3y50'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = ['campus-info.onrender.com']
-
+ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
 
 
 
@@ -102,10 +102,12 @@ DATABASES = {
     }
 }
 
-import dj_database_url
-# If using Render or similar services, you can uncomment the following line
 
-DATABASES['default'] = dj_database_url.parse("postgresql://campusinfo_database_user:gWrdpEnx7ckixouWbudjJxgzDrENbUvJ@dpg-d26f5v15pdvs73eigrp0-a.oregon-postgres.render.com/campusinfo_database")
+
+
+import dj_database_url
+
+DATABASES['default'] = dj_database_url.parse(config('DATABASE_URL'))
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
