@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, serializers
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import Post, Like, Comment
@@ -19,6 +19,7 @@ class IsStudent(permissions.BasePermission):
 class PostViewSet(viewsets.ModelViewSet):
   queryset = Post.objects.all().order_by('-created_at')
   serializer_class = PostSerializer
+  lookup_field = 'slug'
 
   def get_permissions(self):
     if self.action in ['create', 'update', 'partial_update', 'destroy']:
@@ -47,11 +48,46 @@ class LikeViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
   serializer_class = CommentSerializer
   permission_classes = [permissions.IsAuthenticated]
-
+  lookup_field = 'slug'
 
   def get_queryset(self):
-    return Comment.objects.filter(post_id=self.request.query_params.get('post_id'))
-
+    # For nested routing, get post from URL parameters
+    if hasattr(self, 'kwargs') and 'post_pk' in self.kwargs:
+      post_slug = self.kwargs['post_pk']
+      try:
+        post = Post.objects.get(slug=post_slug)
+        return Comment.objects.filter(post=post)
+      except Post.DoesNotExist:
+        return Comment.objects.none()
+    
+    # Fallback for direct access
+    post_slug = self.request.query_params.get('post_slug')
+    if post_slug:
+      try:
+        post = Post.objects.get(slug=post_slug)
+        return Comment.objects.filter(post=post)
+      except Post.DoesNotExist:
+        return Comment.objects.none()
+    return Comment.objects.all()
 
   def perform_create(self, serializer):
-    serializer.save(user=self.request.user)
+    # For nested routing, get post from URL parameters
+    if hasattr(self, 'kwargs') and 'post_pk' in self.kwargs:
+      post_slug = self.kwargs['post_pk']
+      try:
+        post = Post.objects.get(slug=post_slug)
+        serializer.save(user=self.request.user, post=post)
+        return
+      except Post.DoesNotExist:
+        raise serializers.ValidationError("Post not found")
+    
+    # Fallback for direct access
+    post_slug = self.request.data.get('post_slug')
+    if post_slug:
+      try:
+        post = Post.objects.get(slug=post_slug)
+        serializer.save(user=self.request.user, post=post)
+      except Post.DoesNotExist:
+        raise serializers.ValidationError("Post not found")
+    else:
+      raise serializers.ValidationError("post_slug is required")
